@@ -31,13 +31,12 @@
         "512": "img/logo512.png"
     },
     "content_scripts": [{
-        "matches": ["https://app.plex.tv/*", "https://plex.tv/*"],
+        "matches": ["https://app.plex.tv/*"],
         "js": ["js/content_script.js"],
         "run_at": "document_idle",
         "all_frames": true
     }],
     "permissions": [
-        "https://app.plex.tv/",
-        "https://plex.tv/"
+        "https://app.plex.tv/"
     ]
 }
