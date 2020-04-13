@@ -4,7 +4,7 @@
 function downloadInjectAndTrigger() {
     if (typeof plxDwnld == 'undefined') {
         const jsCode = document.createElement('script');
-        jsCode.setAttribute('src', 'https://piplong.run/plxdwnld/bookmarklet.js?ts=' + Math.floor(Date.now() / 1000));
+        jsCode.setAttribute('src', 'https://piplong.run/plxdwnld/bookmarklet.js?v=0.3');
         document.body.appendChild(jsCode);
     } else {
         plxDwnld.init();
