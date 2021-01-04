@@ -1,3 +1,6 @@
+"use strict"
+
+
 function downloadInjectAndTrigger() {
     if (typeof plxDwnld == 'undefined') {
         const jsCode = document.createElement('script');
