@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Shared Library Downloader for Plex",
     "short_name": "Plex Downloader",
-    "version": "0.0.3",
+    "version": "0.1.0",
     "description": "Add a download button to the Plex Web interface",
     "page_action": {
         "default_title": "Downloader for Plex",
@@ -31,10 +31,14 @@
         "512": "img/logo512.png"
     },
     "content_scripts": [{
-        "matches": ["https://app.plex.tv/*"],
-        "js": ["js/content_script.js"]
+        "matches": ["https://app.plex.tv/*", "https://plex.tv/*"],
+        "js": ["js/content_script.js"],
+        "run_at": "document_idle",
+        "all_frames": true
     }],
     "permissions": [
-        "https://app.plex.tv/"
-    ]
+        "https://app.plex.tv/",
+        "https://plex.tv/"
+    ],
+    "web_accessible_resources": ["js/download_script.js"]
 }
