@@ -1,6 +1,10 @@
 # Shared Library Downloader for Plex
 
-# [Chrome Store Download](https://chrome.google.com/webstore/detail/shared-library-downloader/jdlidamgkbjkdogfgelbkkmdaehmeglp?hl=en)
+## Chrome Store Download
+
+[Click here](https://chrome.google.com/webstore/detail/shared-library-downloader/jdlidamgkbjkdogfgelbkkmdaehmeglp)
+
+## Description
 
 This Chrome extension creates a download button on media pages within plex to enable non-media-owners to download files.
 
