@@ -56,7 +56,7 @@ if (typeof plxDwnld === "undefined") {
             const partKeyNode = xml.evaluate("//Media/Part[1]/@key", xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
             if (partKeyNode.singleNodeValue) {
-                window.location.href = baseUri + partKeyNode.singleNodeValue.textContent + "?X-Plex-Token=" + localStorage.myPlexAccessToken;
+                window.location.href = baseUri + partKeyNode.singleNodeValue.textContent + "?download=1&X-Plex-Token=" + localStorage.myPlexAccessToken;
             } else {
                 alert("Cannot start media download.");
             }
