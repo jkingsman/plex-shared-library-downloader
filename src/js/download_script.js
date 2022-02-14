@@ -13,15 +13,7 @@
 if (typeof plxDwnld === "undefined") {
 
     window.plxDwnld = (function () {
-
         const self = {};
-        const clientIdRegex = /server\/([a-f0-9]{40})\//;
-        const metadataIdRegex = /key=%2Flibrary%2Fmetadata%2F(\d+)/;
-        const apiResourceUrl = "https://plex.tv/api/resources?includeHttps=1&X-Plex-Token={token}";
-        const apiLibraryUrl = "{baseuri}/library/metadata/{id}?X-Plex-Token={token}";
-        const downloadUrl = "{baseuri}{partkey}?X-Plex-Token={token}";
-        const baseUriXpath = "//Device[@clientIdentifier='{clientid}']/Connection[@local='0' and not(@address='https')]/@uri";
-        const partKeyXpath = "//Media/Part[1]/@key";
         let baseUri = null;
 
         const getXml = function (url, callback) {
@@ -38,17 +30,17 @@ if (typeof plxDwnld === "undefined") {
         };
 
         const getMetadata = function (xml) {
-            const clientId = clientIdRegex.exec(window.location.href);
+            const clientId = /server\/([a-f0-9]{40})\//.exec(window.location.href);
 
             if (clientId && clientId.length == 2) {
-                const baseUriNode = xml.evaluate(baseUriXpath.replace('{clientid}', clientId[1]), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+                const baseUriNode = xml.evaluate("//Device[@clientIdentifier='{clientid}']/Connection[@local='0' and not(@address='https')]/@uri".replace('{clientid}', clientId[1]), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
                 if (baseUriNode.singleNodeValue) {
                     baseUri = baseUriNode.singleNodeValue.textContent;
-                    const metadataId = metadataIdRegex.exec(window.location.href);
+                    const metadataId = /key=%2Flibrary%2Fmetadata%2F(\d+)/.exec(window.location.href);
 
                     if (metadataId) {
-                        getXml(apiLibraryUrl.replace('{baseuri}', baseUri).replace('{id}', metadataId).replace('{token}', localStorage.myPlexAccessToken), getDownloadUrl);
+                        getXml(baseUri + "/library/metadata/" + metadataId + "?download=1&X-Plex-Token=" + localStorage.myPlexAccessToken, getDownloadUrl);
                     } else {
                         alert("Error while getting media id.");
                     }
@@ -61,14 +53,10 @@ if (typeof plxDwnld === "undefined") {
         };
 
         const getDownloadUrl = function (xml) {
-            const partKeyNode = xml.evaluate(partKeyXpath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            const partKeyNode = xml.evaluate("//Media/Part[1]/@key", xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
             if (partKeyNode.singleNodeValue) {
-                let finalUrl = downloadUrl.replace('{baseuri}', baseUri).replace('{partkey}', partKeyNode.singleNodeValue.textContent).replace('{token}', localStorage.myPlexAccessToken);
-                if (!finalUrl.includes("download=1")) {
-                    finalUrl += "&download=1";
-                }
-                window.location.href = finalUrl;
+                window.location.href = baseUri + partKeyNode.singleNodeValue.textContent + "?X-Plex-Token=" + localStorage.myPlexAccessToken;
             } else {
                 alert("Cannot start media download.");
             }
@@ -76,7 +64,7 @@ if (typeof plxDwnld === "undefined") {
 
         self.init = function () {
             if (typeof localStorage.myPlexAccessToken != "undefined") {
-                getXml(apiResourceUrl.replace('{token}', localStorage.myPlexAccessToken), getMetadata);
+                getXml("https://plex.tv/api/resources?includeHttps=1&X-Plex-Token=" + localStorage.myPlexAccessToken, getMetadata);
             } else {
                 alert("You are currently not browsing or logged into a Plex web environment.");
             }
@@ -108,4 +96,4 @@ window.onhashchange = () => {
     setTimeout(injectFunction, 1000);
 };
 
-setTimeout(injectFunction, 2000); // inject on first load too
+setTimeout(injectFunction, 1500); // inject on first load too
