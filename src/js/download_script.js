@@ -14,6 +14,15 @@ if (typeof plxDwnld === "undefined") {
 
     window.plxDwnld = (function () {
         const self = {};
+        const clientIdRegex = /server\/([a-f0-9]{40})\//;
+        const metadataIdRegex = /key=%2Flibrary%2Fmetadata%2F(\d+)/;
+        const apiResourceUrl = "https://plex.tv/api/resources?includeHttps=1&X-Plex-Token={token}";
+        const apiLibraryUrl = "{baseuri}/library/metadata/{id}?X-Plex-Token={token}";
+        const downloadUrl = "{baseuri}{partkey}?download=1&X-Plex-Token={token}";
+        const accessTokenXpath = "//Device[@clientIdentifier='{clientid}']/@accessToken";
+        const baseUriXpath = "//Device[@clientIdentifier='{clientid}']/Connection[@local='0' and not(@address='https')]/@uri";
+        const partKeyXpath = "//Media/Part[1]/@key";
+        let accessToken = null;
         let baseUri = null;
 
         const getXml = function (url, callback) {
@@ -30,17 +39,19 @@ if (typeof plxDwnld === "undefined") {
         };
 
         const getMetadata = function (xml) {
-            const clientId = /server\/([a-f0-9]{40})\//.exec(window.location.href);
+            const clientId = clientIdRegex.exec(window.location.href);
 
             if (clientId && clientId.length == 2) {
-                const baseUriNode = xml.evaluate("//Device[@clientIdentifier='{clientid}']/Connection[@local='0' and not(@address='https')]/@uri".replace('{clientid}', clientId[1]), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+                const accessTokenNode = xml.evaluate(accessTokenXpath.replace("{clientid}", clientId[1]), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+                const baseUriNode = xml.evaluate(baseUriXpath.replace("{clientid}", clientId[1]), xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
-                if (baseUriNode.singleNodeValue) {
+                if (accessTokenNode.singleNodeValue && baseUriNode.singleNodeValue) {
+                    accessToken = accessTokenNode.singleNodeValue.textContent;
                     baseUri = baseUriNode.singleNodeValue.textContent;
-                    const metadataId = /key=%2Flibrary%2Fmetadata%2F(\d+)/.exec(window.location.href);
+                    const metadataId = metadataIdRegex.exec(window.location.href);
 
                     if (metadataId && metadataId.length == 2) {
-                        getXml(baseUri + "/library/metadata/" + metadataId[1] + "?download=1&X-Plex-Token=" + localStorage.myPlexAccessToken, getDownloadUrl);
+                        getXml(apiLibraryUrl.replace("{baseuri}", baseUri).replace("{id}", metadataId[1]).replace("{token}", accessToken), getDownloadUrl);
                     } else {
                         alert("Error while getting media id.");
                     }
@@ -53,10 +64,10 @@ if (typeof plxDwnld === "undefined") {
         };
 
         const getDownloadUrl = function (xml) {
-            const partKeyNode = xml.evaluate("//Media/Part[1]/@key", xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            const partKeyNode = xml.evaluate(partKeyXpath, xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
             if (partKeyNode.singleNodeValue) {
-                window.location.href = baseUri + partKeyNode.singleNodeValue.textContent + "?download=1&X-Plex-Token=" + localStorage.myPlexAccessToken;
+                window.location.href = downloadUrl.replace("{baseuri}", baseUri).replace("{partkey}", partKeyNode.singleNodeValue.textContent).replace("{token}", accessToken);
             } else {
                 alert("Cannot start media download.");
             }
@@ -64,7 +75,7 @@ if (typeof plxDwnld === "undefined") {
 
         self.init = function () {
             if (typeof localStorage.myPlexAccessToken != "undefined") {
-                getXml("https://plex.tv/api/resources?includeHttps=1&X-Plex-Token=" + localStorage.myPlexAccessToken, getMetadata);
+                getXml(apiResourceUrl.replace("{token}", localStorage.myPlexAccessToken), getMetadata);
             } else {
                 alert("You are currently not browsing or logged into a Plex web environment.");
             }
