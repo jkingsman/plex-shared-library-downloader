@@ -1,5 +1,7 @@
+"use strict";
+
 // Inject download script
-var s = document.createElement("script");
+const s = document.createElement("script");
 s.src = chrome.runtime.getURL("js/download_script.js");
 s.onload = function () {
     this.remove();
