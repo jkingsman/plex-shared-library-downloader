@@ -4,6 +4,10 @@
 
 [Click here](https://chrome.google.com/webstore/detail/shared-library-downloader/jdlidamgkbjkdogfgelbkkmdaehmeglp)
 
+## Safari version
+
+[Safari extension by WarningImHack3r](https://github.com/WarningImHack3r/plex-shared-library-downloader-safari) (Requires a Mac with Xcode)
+
 ## Description
 
 This Chrome extension creates a download button on media pages within plex to enable non-media-owners to download files.
