@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Shared Library Downloader for Plex",
     "short_name": "Plex Downloader",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Add a download button to the Plex Web interface",
     "action": {
         "default_title": "Downloader for Plex",
