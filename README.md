@@ -1,5 +1,11 @@
 # Shared Library Downloader for Plex
 
+----
+
+# This library is deprecated and non-functional!
+
+----
+
 ## Chrome Store Download
 
 [Click here](https://chrome.google.com/webstore/detail/shared-library-downloader/jdlidamgkbjkdogfgelbkkmdaehmeglp)
