@@ -4,6 +4,8 @@
 
 # This library is deprecated and non-functional!
 
+Please see https://github.com/jkingsman/plex-shared-library-downloader/issues/12#issuecomment-1327894436 -- tl;dr I can't keep up the cat and mouse game so I'm gonna archive this project.  
+
 ----
 
 ## Chrome Store Download
